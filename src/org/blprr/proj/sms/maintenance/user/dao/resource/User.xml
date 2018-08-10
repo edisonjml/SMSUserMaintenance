@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sqlmap-2.dtd">
+<sqlMap namespace="Users">
+
+	<typeAlias alias="UserClass" type="org.blprr.proj.sms.maintenance.user.entity.User"/>
+	
+	<resultMap id="getUserRecordMap" class="UserClass">
+		<result column="USER_ID"			property="userId"/>
+		<result column="PASSWORD"			property="password"/>
+		<result column="FIRST_NAME"			property="firstName"/>
+		<result column="LAST_NAME"			property="lastName"/>
+		<result column="MIDDLE_INITIAL"		property="middleInitial"/>
+		<result column="EMAIL" 				property="email"/>
+		<result column="ACTIVE_TAG" 		property="activeTag"/>
+		<result column="ACCESS_LEVEL" 		property="accessLevel"/>
+		<result column="ENTRY_DATE" 		property="entryDate"/>
+		<result column="LAST_LOGIN" 		property="lastLogin"/>
+		<result column="LAST_USER" 			property="lastUser"/>
+		<result column="LAST_UPDATE" 		property="lastUpdate"/>
+	</resultMap>
+	
+	<resultMap id="getUserProfileMap" class="UserClass">
+		<result column="USER_ID"			property="userId"/>
+		<result column="PASSWORD"			property="password"/>
+		<result column="FIRST_NAME"			property="firstName"/>
+		<result column="LAST_NAME"			property="lastName"/>
+		<result column="MIDDLE_INITIAL"		property="middleInitial"/>
+		<result column="EMAIL" 				property="email"/>
+		<result column="ENTRY_DATE" 		property="entryDate"/>
+		<result column="LAST_LOGIN" 		property="lastLogin"/>
+	</resultMap>
+
+	<select id="loadRecord" resultMap="getUserRecordMap">
+		
+		SELECT USER_ID, PASSWORD,
+			FIRST_NAME, LAST_NAME,
+			MIDDLE_INITIAL, EMAIL,
+			ACTIVE_TAG, ACCESS_LEVEL,
+			ENTRY_DATE, LAST_LOGIN,
+			LAST_USER, LAST_UPDATE
+		FROM SMS_USERS_BLPRR
+		
+		<dynamic prepend="WHERE">
+		
+			<isNotNull property="userId">
+			
+				USER_ID LIKE '%$userId$%'
+			
+			</isNotNull>
+		
+		</dynamic>
+		
+	</select>
+	
+	<insert id="insertRecord" parameterClass="java.util.Map">
+		
+		INSERT INTO SMS_USERS_BLPRR VALUES (
+			#userId#, #password#,
+			#firstName#, #lastName#,
+			#middleInitial#, #email#,
+			#activeTag#, #accessLevel#,
+			TO_DATE(#entryDate#, 'DD/MM/YYYY'),
+			TO_DATE(#lastLogin#, 'DD/MM/YYYY'),
+			#lastUser#, TO_DATE(#lastUpdate#, 'DD/MM/YYYY'),
+			#attempts#
+		)
+		
+	</insert>
+	
+	<insert id="updateRecord" parameterClass="java.util.Map">
+		
+		UPDATE SMS_USERS_BLPRR SET
+			FIRST_NAME = #firstName#,
+			LAST_NAME = #lastName#,
+			MIDDLE_INITIAL = #middleInitial#,
+			EMAIL = #email#,
+			ACTIVE_TAG = #activeTag#,
+			ACCESS_LEVEL = #accessLevel#,
+			LAST_USER = #lastUser#,
+			LAST_UPDATE = TO_DATE(#lastUpdate#, 'DD/MM/YYYY')
+		WHERE USER_ID = #userId#
+		
+	</insert>
+	
+	<insert id="updateLogDate" parameterClass="java.util.Map">
+		
+		UPDATE SMS_USERS_BLPRR SET
+			LAST_LOGIN = TO_DATE(#lastLogin#, 'DD/MM/YYYY')
+		WHERE USER_ID = #userId#
+		
+	</insert>
+
+	<select id="loadProfile" resultMap="getUserProfileMap">
+		
+		SELECT USER_ID,
+			PASSWORD,
+			FIRST_NAME,
+			LAST_NAME,
+			MIDDLE_INITIAL, 
+			EMAIL,
+			ENTRY_DATE,
+			LAST_LOGIN
+		FROM SMS_USERS_BLPRR
+		
+		<dynamic prepend="WHERE">
+		
+			<isNotNull property="userId">
+			
+				USER_ID = #userId#
+			
+			</isNotNull>
+		
+		</dynamic>
+		
+	</select>
+	
+	<insert id="updateProfile" parameterClass="java.util.Map">
+		
+		UPDATE SMS_USERS_BLPRR SET
+			FIRST_NAME = #firstName#,
+			LAST_NAME = #lastName#,
+			MIDDLE_INITIAL = #middleInitial#,
+			EMAIL = #email#,
+			LAST_UPDATE = TO_DATE(#lastUpdate#, 'DD/MM/YYYY')
+		WHERE USER_ID = #userId#
+		
+	</insert>
+	
+	<insert id="updatePassword" parameterClass="java.util.Map">
+		
+		UPDATE SMS_USERS_BLPRR SET
+			PASSWORD = #password#,
+			LAST_UPDATE = TO_DATE(#lastUpdate#, 'DD/MM/YYYY')
+		WHERE USER_ID = #userId#
+		
+	</insert>
+	
+</sqlMap>
