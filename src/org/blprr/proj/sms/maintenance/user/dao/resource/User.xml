@@ -61,8 +61,7 @@
 			#activeTag#, #accessLevel#,
 			TO_DATE(#entryDate#, 'DD/MM/YYYY'),
 			TO_DATE(#lastLogin#, 'DD/MM/YYYY'),
-			#lastUser#, TO_DATE(#lastUpdate#, 'DD/MM/YYYY'),
-			#attempts#
+			#lastUser#, TO_DATE(#lastUpdate#, 'DD/MM/YYYY'), TO_NUMBER('0')
 		)
 		
 	</insert>

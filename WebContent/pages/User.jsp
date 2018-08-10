@@ -5,10 +5,10 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Insert title here</title>
+<script src="../Prototype/prototype.js"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script src="../Prototype/prototype.js"></script>
 <script>var contextPath = "${pageContext.request.contextPath}";</script>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -21,6 +21,39 @@
 </style>
 </head>
 <body>
+
+<!-- 	
+-->
+
+  	<div id="isEmpty" class="alert alert-danger alert-dismissible">
+  	 	<a id="isEmptyClose" class="close">&times;</a>
+    	<strong>Empty textfield/s detected</strong> Please fill out all the textfields.
+  	</div>
+
+  	<div id="passVerifyFailed" class="alert alert-danger alert-dismissible">
+  		<a id="passVerifyFailedClose" class="close">&times;</a>
+    	<strong>Password Change Failed</strong> Failed to retype the new password.
+  	</div>
+
+  	<div id="sameOldPass" class="alert alert-danger alert-dismissible">
+  		<a id="sameOldPassClose" class="close">&times;</a>
+    	<strong>Password Change Failed</strong> Your new password should not be the same as the old one.
+  	</div>
+
+  	<div id="passTooShort" class="alert alert-danger alert-dismissible">
+  		<a id="passTooShortClose" class="close">&times;</a>
+    	<strong>Password is too short</strong> Password should be at least 8 characters.
+  	</div>
+
+  	<div id="passTooLong" class="alert alert-danger alert-dismissible">
+  		<a id="passTooLongClose" class="close">&times;</a>
+    	<strong>Password is too short</strong> Password should not exceed 20 characters.
+  	</div>
+
+  	<div id="passWithSpace" class="alert alert-danger alert-dismissible">
+  		<a id="passWithSpaceClose" class="close">&times;</a>
+    	<strong>White spaces detected</strong> Password should not contain white spaces.
+  	</div>
 
 	<br/>
 
@@ -183,6 +216,20 @@
 	var pass = '${pass}';
 	var currentUser = '${currentUser}';
 	
+	$('isEmpty').hide();
+	$('passVerifyFailed').hide();
+	$('sameOldPass').hide();
+	$('passTooShort').hide();
+	$('passTooLong').hide();
+	$('passWithSpace').hide();
+	
+	$('isEmptyClose').observe('click', function(){$('isEmpty').hide();});
+	$('passVerifyFailedClose').observe('click', function(){$('passVerifyFailed').hide();});
+	$('sameOldPassClose').observe('click', function(){$('sameOldPass').hide();});
+	$('passTooShortClose').observe('click', function(){$('passTooShort').hide();});
+	$('passTooLongClose').observe('click', function(){$('passTooLong').hide();});
+	$('passWithSpaceClose').observe('click', function(){$('passWithSpace').hide();});
+	
 	if(
 			(currentUser == pass) || 
 			(pass.length < 8 || pass.length > 20) || 
@@ -256,6 +303,7 @@
 			$F('txtFirst') == "" ||
 			$F('txtLast') == ""
 		) {
+			$('isEmpty').show();
 		} else {
 			new Ajax.Request(contextPath + "/updateProfile", {
 				method:"POST",
@@ -264,7 +312,7 @@
 					firstName:$F('txtFirst'),
 					lastName:$F('txtLast'),
 					middleInitial:$F('txtMiddle')==""?null:$F('txtMiddle'),
-					email:$F('txtEmail')==""?null:$F('txtMiddle'),
+					email:$F('txtEmail')==""?null:$F('txtEmail'),
 					lastUpdate:getCurrentDate(),
 					action:"update"
 				},
@@ -280,18 +328,23 @@
 	
 	function updatePassword(){
 		
+
 		if(
-				$F('currentPass') != pass ||
-				$F('newPass') != $F('retypePass')
-		){
-			
+			$F('currentPass') == "" ||
+			$F('newPass') == "" ||
+			$F('retypePass') == ""
+		) {
+			$('isEmpty').show();
+		} else if($F('newPass') != $F('retypePass')){
+			$('passVerifyFailed').show()
 		} else if(pass == $F('newPass')){
-			
-		} else if($F('newPass').length < 8 ||
-				$F('newPass').length > 20){
-			
+			$('sameOldPass').show()
+		} else if($F('newPass').length <= 8){
+			$('passTooShort').show()
+		} else if($F('newPass').length >= 20){
+			$('passTooLong').show()
 		} else if($F('newPass').includes(" ")){
-			
+			$('passWithSpace').show()
 		} else {
 			new Ajax.Request(contextPath + "/updatePassword", {
 				method:"POST",

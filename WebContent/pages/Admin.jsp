@@ -23,6 +23,16 @@
 </style>
 </head>
 <body>
+
+  	<div id="isEmpty" class="alert alert-danger alert-dismissible">
+  	 	<a id="isEmptyClose" class="close">&times;</a>
+    	<strong>Empty textfield/s detected</strong> Please fill out all the textfields.
+  	</div>
+
+  	<div id="isExisting" class="alert alert-danger">
+  		<a id="isExistingClose" class="close">&times;</a>
+    	<strong>ID already exists</strong> Please think of another user ID
+  	</div>
 	
 	<h4 id="title"></h4>
 	<div align="right">
@@ -104,7 +114,7 @@
 			</div>
 		
 			<div class="col-sm-6" id="pass">
-			<b>Password:</b><input type="text" class="form-control"  id="txtPass">
+			<b>Password:</b><input type="password" class="form-control"  id="txtPass">
 			</div>
 		
 		</div>
@@ -184,10 +194,10 @@
 	
 	//EXECUTED FUNCTIONS
 	
-	$('viewBoxes').hide();
-	$('confirmAdd').hide();
-	$('updateUser').hide();
-	$('btnCancel').hide();
+	defaultView();
+
+	$('isEmptyClose').observe('click', function(){$('isEmpty').hide();});
+	$('isExistingClose').observe('click', function(){$('isExisting').hide();});
 
 	$('confirmAdd').observe('click', function(){insertRecord();});
 	$('updateUser').observe('click', function(){updateRecord();});
@@ -220,6 +230,8 @@
 		$('title').innerHTML = "";
 		$('user').show();
 		$('pass').show();
+		$('isEmpty').hide();
+		$('isExisting').hide();
 		clickedId = "";
 	}
 	
@@ -288,7 +300,9 @@
 			$F('txtLast') == "" ||
 			$F('accessLevel') == ""	
 		) {
+			$('isEmpty').show();
 		} else if(IdExists()){
+			$('isExisting').show();
 		} else {
 			if ($F('txtPass') == "" || $F('txtPass') == null){
 				$('txtPass').value = $F('txtUser')
@@ -318,14 +332,13 @@
 					firstName:$F('txtFirst'),
 					lastName:$F('txtLast'),
 					middleInitial:$F('txtMiddle')==""?null:$F('txtMiddle'),
-					email:$F('txtEmail')==""?null:$F('txtMiddle'),
+					email:$F('txtEmail')==""?null:$F('txtEmail'),
 					activeTag:isActive,
 					accessLevel:$F('accessLevel'),
 					entryDate:getCurrentDate(),
 					lastLogin:getCurrentDate(), //home login
 					lastUser:currentId, //home login
 					lastUpdate:getCurrentDate(),
-					attempts:0,
 					action:"insert"
 				},
 				onComplete:function(response){
@@ -361,7 +374,7 @@
 					firstName:$F('txtFirst'),
 					lastName:$F('txtLast'),
 					middleInitial:$F('txtMiddle')==""?null:$F('txtMiddle'),
-					email:$F('txtEmail')==""?null:$F('txtMiddle'),
+					email:$F('txtEmail')==""?null:$F('txtEmail'),
 					activeTag:isActive,
 					accessLevel:$F('accessLevel'),
 					lastUser:currentId, //home login
@@ -378,6 +391,17 @@
 	}
 	
 	function searchRecord(){
+		new Ajax.Request(contextPath + "/searchRecord", {
+			method:"GET",
+			parameters:{
+				search:$F("txtSearch")
+			},
+			onComplete:function(response){
+				$("content").update(response.responseText);
+				defaultView();
+				$('currentUser').innerHTML = currentId;
+			}
+		});
 		new Ajax.Request(contextPath + "/searchRecord", {
 			method:"GET",
 			parameters:{
