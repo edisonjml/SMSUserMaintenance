@@ -259,10 +259,10 @@
 				
 				$('title').innerHTML += " '" + clickedId + "'";
 				
-				if (user.down("td", 6).innerHTML == 'A'){
+				if (user.down("td", 5).innerHTML == 'Y'){
 					$('rdoActive').checked = true;
 					$('rdoInactive').checked = false;
-				} else if (user.down("td", 6).innerHTML == 'I'){
+				} else if (user.down("td", 5).innerHTML == 'N'){
 					$('rdoActive').checked = false;
 					$('rdoInactive').checked = true;
 				}

@@ -12,6 +12,7 @@
 		
 		<script src="Prototype/prototype.js"></script>
 		<script>var contextPath = "${pageContext.request.contextPath}";</script>
+		<link rel="stylesheet" href="css/bootstrap.min.css"/>
 	
 	</head>
 	
@@ -19,19 +20,28 @@
 	
 	<div class="container">	
 	
-		<h2>HEADER</h2>
-	
 		<h4 id="loading">loading...</h4>
-		<div id="content">
-			
-			<h4>FakeLogin</h4>
+		<div id="content" align="center">
 		
-			Username: <input type="text" id="txtUsername"/>
-			Password: <input type="password" id="txtPassword"/>
-			<br/>
+		<div style="width: 400px; ">
+		
+			<br><br> <br>
+		
+			<div class="form-group">
+			<input type="text" id="txtUsername" name="username" class="form-control" placeholder="Username" required="required"/>
+			</div>
+			
+			<div class="form-group">
+			<input type="password" id="txtPassword" name="password" class="form-control" placeholder="Password" required="required"/>
+			</div>
+			
+			<br>
+			
 			<input type="button" value="User Maintenance Page" id="btnAdmin"/>
 			<input type="button" value="User Profile Page" id="btnUser"/>
-			
+		
+		</div>
+		
 		</div>
 		<br/>
 		<div align="right">
